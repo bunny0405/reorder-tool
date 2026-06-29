@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>追加下單建議 2026-06-29</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft JhengHei',sans-serif;
+     font-size:13px;color:#1a1a1a;background:#ffffff;line-height:1.5}
+.app{max-width:1600px;margin:0 auto;padding:16px}
+.header{display:flex;justify-content:space-between;align-items:flex-end;
+         margin-bottom:14px;border-bottom:1.5px solid #e8e6e0;padding-bottom:10px}
+.header h1{font-size:17px;font-weight:600}
+.header .meta{font-size:11px;color:#999}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:14px}
+.card{background:#fafaf8;border:0.5px solid #e8e6e0;border-radius:8px;padding:10px 12px}
+.card .lbl{font-size:10px;color:#999;margin-bottom:3px}
+.card .val{font-size:20px;font-weight:600}
+.card .sub{font-size:10px;color:#bbb;margin-top:1px}
+.params{background:#fafaf8;border:0.5px solid #e8e6e0;border-radius:8px;
+         padding:12px;margin-bottom:12px}
+.params-title{font-size:11px;font-weight:500;color:#777;margin-bottom:8px}
+.params-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
+.param-row{display:flex;flex-direction:column;gap:3px}
+.param-row label{font-size:10px;color:#999}
+.param-inner{display:flex;align-items:center;gap:5px}
+.param-inner input[type=range]{flex:1;accent-color:#333}
+.param-val{font-size:12px;font-weight:500;min-width:32px}
+.toolbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.toolbar input,.toolbar select{height:30px;border:0.5px solid #ddd;border-radius:6px;
+  padding:0 8px;font-size:12px;background:#fff;color:#222;outline:none}
+.toolbar input:focus,.toolbar select:focus{border-color:#888}
+.toolbar input{width:130px}
+.toolbar select{min-width:110px}
+.def-notes{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.def-note{background:#fafaf8;border-left:3px solid #d0cec8;border-radius:0 6px 6px 0;
+           padding:7px 12px;font-size:11px;color:#555;line-height:1.6}
+.def-note b{color:#222;font-weight:500}
+.def-note .dn-tag{display:inline-block;padding:1px 7px;border-radius:8px;
+                   font-size:10px;font-weight:500;margin-right:6px;vertical-align:middle}
+.dn-supply{background:#FEE2E2;color:#991B1B}
+.dn-shift{background:#FFF3E0;color:#C2410C}
+.btn{height:30px;padding:0 14px;border:0.5px solid #ddd;border-radius:6px;
+      background:#fff;font-size:12px;cursor:pointer;color:#333}
+.btn:hover{background:#f5f5f2}
+.tabs{display:flex;border-bottom:1px solid #e8e6e0;margin-bottom:12px}
+.tab{padding:6px 16px;font-size:12px;cursor:pointer;color:#999;
+      border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.active{color:#111;border-bottom-color:#111;font-weight:500}
+.table-wrap{overflow-x:auto;overflow-y:visible}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead tr{border-bottom:1.5px solid #ddd}
+th{text-align:left;padding:6px 7px;font-weight:500;font-size:10px;
+    color:#999;white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{color:#555}
+td{padding:7px 7px;border-bottom:0.5px solid #f0ede8;vertical-align:middle}
+tr.main-row:hover>td{background:#fafaf8}
+tr.sub-row>td{background:#fafaf8;padding:0}
+.badge{display:inline-flex;align-items:center;font-size:10px;padding:1px 7px;
+        border-radius:9px;font-weight:500;white-space:nowrap}
+.tag-mega{background:#EEEDFE;color:#3C3489}
+.tag-hot{background:#FAECE7;color:#993C1D}
+.tag-rising{background:#E1F5EE;color:#085041}
+.tag-steady{background:#EAF3DE;color:#3B6D11}
+.tag-slow{background:#F1EFE8;color:#5F5E5A}
+.badge-brand{background:#F5F5F2;color:#555;border:0.5px solid #e0ded8}
+.warns{display:flex;gap:4px;flex-wrap:wrap;margin-top:3px}
+.wchip{font-size:10px;padding:1px 6px;border-radius:6px;font-weight:400}
+.wchip.supply{background:#FEE2E2;color:#991B1B}
+.wchip.shift{background:#FFF3E0;color:#C2410C}
+.wchip.end{background:#F3E8FF;color:#6B21A8}
+.score-chip{display:inline-block;width:26px;height:26px;border-radius:50%;
+             background:#f5f5f2;border:0.5px solid #ddd;text-align:center;
+             line-height:26px;font-weight:600;font-size:11px}
+.tip{position:relative;display:inline-flex;align-items:center}
+.tip-icon{font-size:11px;color:#ccc;cursor:help;margin-left:2px}
+
+.prod-img{width:40px;height:40px;object-fit:cover;border-radius:4px;
+           border:0.5px solid #e8e6e0}
+.prod-img-ph{width:40px;height:40px;border-radius:4px;border:0.5px solid #e8e6e0;
+              background:#f5f5f2;display:flex;align-items:center;justify-content:center;
+              color:#ccc;font-size:18px}
+.exp-btn{background:none;border:none;cursor:pointer;color:#bbb;font-size:14px;padding:0 3px}
+.exp-btn:hover{color:#555}
+.sub-inner{padding:10px 10px 10px 50px}
+.sub-meta{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:8px;font-size:11px;color:#666}
+.sub-meta b{color:#333}
+
+.sz-table{width:100%;border-collapse:collapse;font-size:11px}
+.sz-table th{padding:4px 7px;font-weight:500;color:#999;text-align:left;
+              border-bottom:0.5px solid #eee;font-size:10px}
+.sz-table td{padding:4px 7px;border-bottom:0.5px solid #f5f3ef}
+.oos{background:#FEE2E2;color:#991B1B;font-size:9px;padding:1px 5px;
+      border-radius:5px;margin-left:4px}
+.to-urgent{color:#DC2626;font-weight:600}
+.to-healthy{color:#16A34A}
+.to-heavy{color:#D97706}
+.to-slow{color:#9CA3AF}
+.no-data{text-align:center;color:#bbb;padding:36px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="header">
+  <div>
+    <h1>追加下單建議</h1>
+    <div class="meta">庫存快照：2026-06-22　產出：2026-06-29</div>
+  </div>
+  <button class="btn" onclick="window.location.href='output.xlsx'">⬇ 匯出 Excel</button>
+</div>
+
+<div class="cards">
+  <div class="card"><div class="lbl">建議追加色數</div><div class="val" id="c1">—</div><div class="sub">款色需追加</div></div>
+  <div class="card"><div class="lbl">建議追加總量</div><div class="val" id="c2">—</div><div class="sub">件</div></div>
+  <div class="card"><div class="lbl">供給受限</div><div class="val" id="c3">—</div><div class="sub">趨勢數據僅供參考</div></div>
+  <div class="card"><div class="lbl">尺碼結構偏移</div><div class="val" id="c4">—</div><div class="sub">建議人工確認</div></div>
+</div>
+
+<div class="params">
+  <div class="params-title">評分門檻與保障天數（即時重算）</div>
+  <div class="params-grid">
+    <div class="param-row"><label>大爆款門檻 <span class="tip-icon" onclick="showTip(this,'決策分≥此值→大爆款，保障天數最長，全力防斷貨')">ⓘ</span></label><div class="param-inner"><input type="range" min="15" max="25" value="22" id="t1" oninput="sl(this,'tv1','分')"><span class="param-val" id="tv1">22分</span></div></div>
+    <div class="param-row"><label>爆款門檻</label><div class="param-inner"><input type="range" min="10" max="21" value="16" id="t2" oninput="sl(this,'tv2','分')"><span class="param-val" id="tv2">16分</span></div></div>
+    <div class="param-row"><label>潛力款門檻</label><div class="param-inner"><input type="range" min="6" max="15" value="12" id="t3" oninput="sl(this,'tv3','分')"><span class="param-val" id="tv3">12分</span></div></div>
+    <div class="param-row"><label>常青款門檻</label><div class="param-inner"><input type="range" min="3" max="11" value="6" id="t4" oninput="sl(this,'tv4','分')"><span class="param-val" id="tv4">6分</span></div></div>
+    <div class="param-row"><label>大爆款保障天數</label><div class="param-inner"><input type="range" min="14" max="60" value="30" id="d1" oninput="sl(this,'dv1','天')"><span class="param-val" id="dv1">30天</span></div></div>
+    <div class="param-row"><label>爆款保障天數</label><div class="param-inner"><input type="range" min="7" max="45" value="21" id="d2" oninput="sl(this,'dv2','天')"><span class="param-val" id="dv2">21天</span></div></div>
+    <div class="param-row"><label>潛力款保障天數</label><div class="param-inner"><input type="range" min="7" max="30" value="14" id="d3" oninput="sl(this,'dv3','天')"><span class="param-val" id="dv3">14天</span></div></div>
+    <div class="param-row"><label>常青款保障天數</label><div class="param-inner"><input type="range" min="7" max="45" value="30" id="d4" oninput="sl(this,'dv4','天')"><span class="param-val" id="dv4">30天</span></div></div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" id="tab-main" onclick="switchTab('main')">追加明細</div>
+  <div class="tab" id="tab-sum" onclick="switchTab('sum')">本週總表</div>
+</div>
+
+<div id="sec-toolbar">
+<div class="def-notes">
+  <div class="def-note">
+    <span class="dn-tag dn-supply">⚡ 供給受限</span>
+    <b>近7天有貨可販售店數 &lt; 上架初期有貨店數的70%。</b>代表商品銷售下滑可能是因為沒貨可賣，而非市場需求下降，此時趨勢數據不可作為追加依據。
+  </div>
+  <div class="def-note">
+    <span class="dn-tag dn-shift">↕ 尺碼結構偏移</span>
+    <b>各尺碼完銷率與頭單進貨佔比排序不一致。</b>代表版型或市場偏好與預期有落差，建議人工確認追加尺碼比例。
+  </div>
+</div>
+<div class="toolbar">
+  <input type="text" id="fi" placeholder="商品編號" oninput="render()">
+  <input type="text" id="fs" placeholder="款號" oninput="render()">
+  <input type="text" id="fn" placeholder="商品名稱" oninput="render()">
+  <select id="fb" onchange="render()"><option value="">全部品牌</option></select>
+  <select id="fc" onchange="render()"><option value="">全部大分類</option></select>
+  <select id="ft" onchange="render()"><option value="">全部標籤</option>
+    <option>大爆款</option><option>爆款</option><option>潛力款</option><option>常青款</option><option>地雷</option>
+  </select>
+  <select id="fw" onchange="render()"><option value="">全部警示</option>
+    <option value="supply">供給受限</option>
+    <option value="shift">尺碼結構偏移</option>
+    <option value="end">追加量已壓縮</option>
+  </select>
+</div>
+</div>
+
+<div id="sec-main">
+<div class="table-wrap">
+<table>
+<thead><tr>
+  <th></th><th>照片</th><th>品牌</th><th>大分類</th>
+  <th>商品編號</th><th>款號</th><th>商品名稱</th><th>標籤</th>
+  <th style="text-align:right">決策分<span class="tip-icon" onclick="showTip(this,'完銷率評分(1-5) × 銷量評分(1-5)，最高25分。')">ⓘ</span></th>
+  <th style="text-align:right">完銷率<span class="tip-icon" onclick="showTip(this,'累銷量 ÷ 總進貨量(累銷+現庫存回推)。')">ⓘ</span></th>
+  <th style="text-align:right">有效日均銷<span class="tip-icon" onclick="showTip(this,'累銷量÷有貨store-days。只計算可販售店且當天有庫存的天數為分母，排除缺貨期低估。')">ⓘ</span></th>
+  <th style="text-align:right">庫存周轉<span class="tip-icon" onclick="showTip(this,'正價店現有庫存÷有效日均銷÷店數。<10天緊急、10-30天健康、30-60天偏重、>60天滯銷')">ⓘ</span></th>
+  <th style="text-align:right">距下檔<span class="tip-icon" onclick="showTip(this,'距最後販售日天數，接近換季自動壓縮追加量。')">ⓘ</span></th>
+  <th style="text-align:right">建議追加<span class="tip-icon" onclick="showTip(this,'有效日均銷×可販售店數×(LeadTime+有效保障天數)-現有庫存-在途量。')">ⓘ</span></th>
+  <th style="text-align:center;min-width:110px">近4週趨勢</th>
+</tr></thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+</div>
+
+<div id="sec-sum" style="display:none">
+<div class="table-wrap">
+<table>
+<thead><tr><th>年度</th><th>季節</th><th>品牌</th><th>大分類</th>
+  <th style="text-align:right">建議追加色數</th><th style="text-align:right">建議追加量</th>
+</tr></thead>
+<tbody id="tbody-sum"></tbody>
+</table>
+</div>
+</div>
+
+</div>
+<script>
+const DATA={"generated_at": "2026-06-29", "inv_snap_date": "2026-06-22", "products": [{"pid": "2620121021", "style": "ML11559", "name": "法式方領綁帶刺繡蕾絲荷葉澎袖上衣", "brand": "AS", "cat": "上衣", "year": "26", "season": "春夏", "color": "黑", "img_url": "https://airsblobstage.blob.core.windows.net/photo/purchasephoto/ML11559.webp", "cum_sales": 2025, "sellthru": 0.9773, "effective_spsd": 1.7873, "decision_score": 25, "st_score": 5, "vol_score": 5, "supply_warn": false, "size_shift_warn": true, "size_complete_rate": 0.0, "color_main_inv": 47, "turnover_days": 0.9, "days_left": 64, "weekly_sales": [{"week": "06/01", "qty": 226}, {"week": "06/08", "qty": 215}, {"week": "06/15", "qty": 190}, {"week": "06/22", "qty": 28}], "already_ordered": 170, "transit_total": 0, "eligible_store_count": 30, "main_store_count": 30, "tag": "大爆款", "reorder": 3385, "eff_guard": 19, "leadtime": 45, "near_end": false, "sz_detail": [{"sz": "S", "inv": 8, "cum_sales": 648, "sellthru_a": 0.9878, "days_to_55_b": 54, "spsd_c": 1.2226, "is_oos": false, "reorder": 1140, "transit": 0}, {"sz": "M", "inv": 20, "cum_sales": 691, "sellthru_a": 0.9719, "days_to_55_b": 52, "spsd_c": 1.2541, "is_oos": false, "reorder": 1122, "transit": 0}, {"sz": "L", "inv": 19, "cum_sales": 686, "sellthru_a": 0.973, "days_to_55_b": 53, "spsd_c": 1.2228, "is_oos": false, "reorder": 1123, "transit": 0}], "headorder_rank": ["M", "L", "S"], "sz_sellthru_map": {"S": 0.9878048780487805, "M": 0.9718706047819972, "L": 0.9730496453900709}}, {"pid": "2620121021", "style": "ML11559", "name": "法式方領綁帶刺繡蕾絲荷葉澎袖上衣", "brand": "AS", "cat": "上衣", "year": "26", "season": "春夏", "color": "白", "img_url": "https://airsblobstage.blob.core.windows.net/photo/purchasephoto/ML11559.webp", "cum_sales": 2122, "sellthru": 0.9738, "effective_spsd": 1.8468, "decision_score": 25, "st_score": 5, "vol_score": 5, "supply_warn": false, "size_shift_warn": true, "size_complete_rate": 0.0667, "color_main_inv": 57, "turnover_days": 1.0, "days_left": 64, "weekly_sales": [{"week": "06/01", "qty": 235}, {"week": "06/08", "qty": 229}, {"week": "06/15", "qty": 197}, {"week": "06/22", "qty": 16}], "already_ordered": 0, "transit_total": 0, "eligible_store_count": 30, "main_store_count": 30, "tag": "大爆款", "reorder": 3267, "eff_guard": 30, "leadtime": 30, "near_end": false, "sz_detail": [{"sz": "S", "inv": 17, "cum_sales": 719, "sellthru_a": 0.9769, "days_to_55_b": 53, "spsd_c": 1.2658, "is_oos": false, "reorder": 1092, "transit": 0}, {"sz": "M", "inv": 19, "cum_sales": 691, "sellthru_a": 0.9732, "days_to_55_b": 52, "spsd_c": 1.2406, "is_oos": false, "reorder": 1088, "transit": 0}, {"sz": "L", "inv": 21, "cum_sales": 712, "sellthru_a": 0.9714, "days_to_55_b": 52, "spsd_c": 1.2513, "is_oos": false, "reorder": 1086, "transit": 0}], "headorder_rank": ["S", "L", "M"], "sz_sellthru_map": {"S": 0.9769021739130435, "M": 0.9732394366197183, "L": 0.9713506139154161}}, {"pid": "2620123005", "style": "EB19912", "name": "雙層腰頭反摺鉚釘牛仔短褲(附皮帶)", "brand": "AS", "cat": "褲子", "year": "26", "season": "春夏", "color": "淺藍", "img_url": "https://airsblobstage.blob.core.windows.net/photo/purchasephoto/EB19912.webp", "cum_sales": 1669, "sellthru": 0.9675, "effective_spsd": 1.6525, "decision_score": 25, "st_score": 5, "vol_score": 5, "supply_warn": false, "size_shift_warn": true, "size_complete_rate": 0.0667, "color_main_inv": 56, "turnover_days": 1.1, "days_left": 64, "weekly_sales": [{"week": "06/01", "qty": 210}, {"week": "06/08", "qty": 169}, {"week": "06/15", "qty": 140}, {"week": "06/22", "qty": 24}], "already_ordered": 90, "transit_total": 90, "eligible_store_count": 30, "main_store_count": 30, "tag": "大爆款", "reorder": 3027, "eff_guard": 29, "leadtime": 35, "near_end": false, "sz_detail": [{"sz": "S", "inv": 22, "cum_sales": 561, "sellthru_a": 0.9623, "days_to_55_b": 57, "spsd_c": 1.2143, "is_oos": false, "reorder": 1003, "transit": 50}, {"sz": "M", "inv": 15, "cum_sales": 558, "sellthru_a": 0.9738, "days_to_55_b": 54, "spsd_c": 1.1797, "is_oos": false, "reorder": 1016, "transit": 40}, {"sz": "L", "inv": 19, "cum_sales": 550, "sellthru_a": 0.9666, "days_to_55_b": 51, "spsd_c": 1.1853, "is_oos": false, "reorder": 1008, "transit": 0}], "headorder_rank": ["S", "M", "L"], "sz_sellthru_map": {"S": 0.9622641509433962, "M": 0.9738219895287958, "L": 0.9666080843585237}}, {"pid": "2620123005", "style": "EB19912", "name": "雙層腰頭反摺鉚釘牛仔短褲(附皮帶)", "brand": "AS", "cat": "褲子", "year": "26", "season": "春夏", "color": "黑", "img_url": "https://airsblobstage.blob.core.windows.net/photo/purchasephoto/EB19912.webp", "cum_sales": 1559, "sellthru": 0.9677, "effective_spsd": 1.6223, "decision_score": 25, "st_score": 5, "vol_score": 5, "supply_warn": false, "size_shift_warn": true, "size_complete_rate": 0.1, "color_main_inv": 52, "turnover_days": 1.1, "days_left": 64, "weekly_sales": [{"week": "06/01", "qty": 190}, {"week": "06/08", "qty": 148}, {"week": "06/15", "qty": 123}, {"week": "06/22", "qty": 14}], "already_ordered": 0, "transit_total": 0, "eligible_store_count": 30, "main_store_count": 30, "tag": "大爆款", "reorder": 2868, "eff_guard": 30, "leadtime": 30, "near_end": false, "sz_detail": [{"sz": "S", "inv": 14, "cum_sales": 525, "sellthru_a": 0.974, "days_to_55_b": 54, "spsd_c": 1.1798, "is_oos": false, "reorder": 962, "transit": 0}, {"sz": "M", "inv": 19, "cum_sales": 528, "sellthru_a": 0.9653, "days_to_55_b": 53, "spsd_c": 1.1733, "is_oos": false, "reorder": 954, "transit": 0}, {"sz": "L", "inv": 19, "cum_sales": 506, "sellthru_a": 0.9638, "days_to_55_b": 51, "spsd_c": 1.2048, "is_oos": false, "reorder": 952, "transit": 0}], "headorder_rank": ["M", "S", "L"], "sz_sellthru_map": {"S": 0.974025974025974, "M": 0.9652650822669104, "L": 0.9638095238095238}}, {"pid": "2620129011", "style": "XY6939", "name": "V領交叉綁帶荷葉下擺針織背心", "brand": "AS", "cat": "針織", "year": "26", "season": "春夏", "color": "白", "img_url": "", "cum_sales": 1424, "sellthru": 0.9344, "effective_spsd": 1.5512, "decision_score": 25, "st_score": 5, "vol_score": 5, "supply_warn": false, "size_shift_warn": true, "size_complete_rate": 0.1667, "color_main_inv": 100, "turnover_days": 2.1, "days_left": 64, "weekly_sales": [{"week": "06/01", "qty": 181}, {"week": "06/08", "qty": 149}, {"week": "06/15", "qty": 119}, {"week": "06/22", "qty": 14}], "already_ordered": 0, "transit_total": 0, "eligible_store_count": 30, "main_store_count": 30, "tag": "大爆款", "reorder": 2692, "eff_guard": 30, "leadtime": 30, "near_end": false, "sz_detail": [{"sz": "S", "inv": 38, "cum_sales": 461, "sellthru_a": 0.9238, "days_to_55_b": 49, "spsd_c": 1.173, "is_oos": false, "reorder": 887, "transit": 0}, {"sz": "M", "inv": 47, "cum_sales": 466, "sellthru_a": 0.9084, "days_to_55_b": 48, "spsd_c": 1.1592, "is_oos": false, "reorder": 872, "transit": 0}, {"sz": "L", "inv": 15, "cum_sales": 497, "sellthru_a": 0.9707, "days_to_55_b": 46, "spsd_c": 1.1558, "is_oos": false, "reorder": 932, "transit": 0}], "headorder_rank": ["M", "L", "S"], "sz_sellthru_map": {"S": 0.9238476953907816, "M": 0.9083820662768031, "L": 0.970703125}}, {"pid": "2620129011", "style": "XY6939", "name": "V領交叉綁帶荷葉下擺針織背心", "brand": "AS", "cat": "針織", "year": "26", "season": "春夏", "color": "米", "img_url": "", "cum_sales": 1383, "sellthru": 0.9326, "effective_spsd": 1.5016, "decision_score": 25, "st_score": 5, "vol_score": 5, "supply_warn": false, "size_shift_warn": true, "size_complete_rate": 0.2667, "color_main_inv": 100, "turnover_days": 2.2, "days_left": 64, "weekly_sales": [{"week": "06/01", "qty": 154}, {"week": "06/08", "qty": 144}, {"week": "06/15", "qty": 160}, {"week": "06/22", "qty": 21}], "already_ordered": 0, "transit_total": 0, "eligible_store_count": 30, "main_store_count": 30, "tag": "大爆款", "reorder": 2603, "eff_guard": 30, "leadtime": 30, "near_end": false, "sz_detail": [{"sz": "S", "inv": 35, "cum_sales": 462, "sellthru_a": 0.9296, "days_to_55_b": 47, "spsd_c": 1.1351, "is_oos": false, "reorder": 865, "transit": 0}, {"sz": "M", "inv": 40, "cum_sales": 453, "sellthru_a": 0.9189, "days_to_55_b": 51, "spsd_c": 1.1353, "is_oos": false, "reorder": 855, "transit": 0}, {"sz": "L", "inv": 25, "cum_sales": 468, "sellthru_a": 0.9493, "days_to_55_b": 48, "spsd_c": 1.1387, "is_oos": false, "reorder": 883, "transit": 0}], "headorder_rank": ["S", "M", "L"], "sz_sellthru_map": {"S": 0.9295774647887324, "M": 0.9188640973630832, "L": 0.949290060851927}}, {"pid": "2611829012", "style": "GE00688QB", "name": "品牌LOGO針織開襟衫", "brand": "OL", "cat": "針織", "year": "26", "season": "春夏", "color": "黑", "img_url": "", "cum_sales": 586, "sellthru": 0.9421, "effective_spsd": 1.4293, "decision_score": 20, "st_score": 5, "vol_score": 4, "supply_warn": false, "size_shift_warn": true, "size_complete_rate": 0.0625, "color_main_inv": 36, "turnover_days": 1.6, "days_left": 64, "weekly_sales": [{"week": "06/01", "qty": 66}, {"week": "06/08", "qty": 68}, {"week": "06/15", "qty": 52}, {"week": "06/22", "qty": 8}], "already_ordered": 0, "transit_total": 0, "eligible_store_count": 16, "main_store_count": 16, "tag": "爆款", "reorder": 1130, "eff_guard": 21, "leadtime": 30, "near_end": false, "sz_detail": [{"sz": "S", "inv": 13, "cum_sales": 164, "sellthru_a": 0.9266, "days_to_55_b": 50, "spsd_c": 1.1156, "is_oos": false, "reorder": 371, "transit": 0}, {"sz": "M", "inv": 12, "cum_sales": 220, "sellthru_a": 0.9483, "days_to_55_b": 45, "spsd_c": 1.1765, "is_oos": false, "reorder": 380, "transit": 0}, {"sz": "L", "inv": 11, "cum_sales": 202, "sellthru_a": 0.9484, "days_to_55_b": 47, "spsd_c": 1.1477, "is_oos": false, "reorder": 380, "transit": 0}], "headorder_rank": ["M", "L", "S"], "sz_sellthru_map": {"S": 0.9265536723163842, "M": 0.9482758620689655, "L": 0.9483568075117371}}, {"pid": "2620122001", "style": "XY62782", "name": "低腰一片式斜紋短裙(附腰帶)", "brand": "AS", "cat": "裙子", "year": "26", "season": "春夏", "color": "杏", "img_url": "", "cum_sales": 1119, "sellthru": 0.8452, "effective_spsd": 1.3798, "decision_score": 25, "st_score": 5, "vol_score": 5, "supply_warn": false, "size_shift_warn": true, "size_complete_rate": 0.6333, "color_main_inv": 205, "turnover_days": 5.0, "days_left": 64, "weekly_sales": [{"week": "06/01", "qty": 125}, {"week": "06/08", "qty": 116}, {"week": "06/15", "qty": 119}, {"week": "06/22", "qty": 22}], "already_ordered": 0, "transit_total": 0, "eligible_store_count": 30, "main_store_count": 30, "tag": "大爆款", "reorder": 2279, "eff_guard": 30, "leadtime": 30, "near_end": false, "sz_detail": [{"sz": "S", "inv": 91, "cum_sales": 376, "sellthru_a": 0.8051, "days_to_55_b": 33, "spsd_c": 1.1429, "is_oos": false, "reorder": 722, "transit": 0}, {"sz": "M", "inv": 72, "cum_sales": 381, "sellthru_a": 0.8411, "days_to_55_b": 30, "spsd_c": 1.1272, "is_oos": false, "reorder": 754, "transit": 0}, {"sz": "L", "inv": 42, "cum_sales": 362, "sellthru_a": 0.896, "days_to_55_b": 30, "spsd_c": 1.107, "is_oos": false, "reorder": 803, "transit": 0}], "headorder_rank": ["S", "M", "L"], "sz_sellthru_map": {"S": 0.8051391862955032, "M": 0.8410596026490066, "L": 0.8960396039603961}}, {"pid": "2620122001", "style": "XY62782", "name": "低腰一片式斜紋短裙(附腰帶)", "brand": "AS", "cat": "裙子", "year": "26", "season": "春夏", "color": "黑", "img_url": "", "cum_sales": 1088, "sellthru": 0.8621, "effective_spsd": 1.3532, "decision_score": 25, "st_score": 5, "vol_score": 5, "supply_warn": true, "size_shift_warn": true, "size_complete_rate": 0.4333, "color_main_inv": 174, "turnover_days": 4.3, "days_left": 64, "weekly_sales": [{"week": "06/01", "qty": 118}, {"week": "06/08", "qty": 126}, {"week": "06/15", "qty": 110}, {"week": "06/22", "qty": 17}], "already_ordered": 0, "transit_total": 0, "eligible_store_count": 30, "main_store_count": 30, "tag": "大爆款", "reorder": 2262, "eff_guard": 30, "leadtime": 30, "near_end": false, "sz_detail": [{"sz": "S", "inv": 101, "cum_sales": 353, "sellthru_a": 0.7775, "days_to_55_b": 34, "spsd_c": 1.1387, "is_oos": false, "reorder": 677, "transit": 0}, {"sz": "M", "inv": 45, "cum_sales": 365, "sellthru_a": 0.8902, "days_to_55_b": 30, "spsd_c": 1.0961, "is_oos": false, "reorder": 775, "transit": 0}, {"sz": "L", "inv": 28, "cum_sales": 370, "sellthru_a": 0.9296, "days_to_55_b": 27, "spsd_c": 1.1246, "is_oos": false, "reorder": 810, "transit": 0}], "headorder_rank": ["S", "M", "L"], "sz_sellthru_map": {"S": 0.7775330396475771, "M": 0.8902439024390244, "L": 0.9296482412060302}}, {"pid": "2610113002", "style": "EB18800", "name": "素面百搭細肩帶背心", "brand": "OL", "cat": "上衣", "year": "26", "season": "春夏", "color": "米白", "img_url": "", "cum_sales": 156, "sellthru": 0.5342, "effective_spsd": 1.0986, "decision_score": 12, "st_score": 4, "vol_score": 3, "supply_warn": true, "size_shift_warn": true, "size_complete_rate": 0.625, "color_main_inv": 136, "turnover_days": 7.7, "days_left": 64, "weekly_sales": [{"week": "06/01", "qty": 26}, {"week": "06/08", "qty": 24}, {"week": "06/15", "qty": 13}, {"week": "06/22", "qty": 6}], "already_ordered": 0, "transit_total": 0, "eligible_store_count": 16, "main_store_count": 16, "tag": "潛力款", "reorder": 637, "eff_guard": 14, "leadtime": 30, "near_end": false, "sz_detail": [{"sz": "S", "inv": 69, "cum_sales": 54, "sellthru_a": 0.439, "days_to_55_b": null, "spsd_c": 1.0385, "is_oos": false, "reorder": 166, "transit": 0}, {"sz": "M", "inv": 48, "cum_sales": 50, "sellthru_a": 0.5102, "days_to_55_b": null, "spsd_c": 1.0204, "is_oos": false, "reorder": 193, "transit": 0}, {"sz": "L", "inv": 19, "cum_sales": 52, "sellthru_a": 0.7324, "days_to_55_b": 34, "spsd_c": 1.04, "is_oos": false, "reorder": 277, "transit": 0}], "headorder_rank": ["S", "M", "L"], "sz_sellthru_map": {"S": 0.43902439024390244, "M": 0.5102040816326531, "L": 0.7323943661971831}}, {"pid": "2620131008", "style": "WX0890A", "name": "抽繩鬆緊腰寬褲", "brand": "AS", "cat": "褲子", "year": "26", "season": "春夏", "color": "卡其", "img_url": "", "cum_sales": 1674, "sellthru": 0.876, "effective_spsd": 1.9088, "decision_score": 25, "st_score": 5, "vol_score": 5, "supply_warn": true, "size_shift_warn": true, "size_complete_rate": 0.5667, "color_main_inv": 237, "turnover_days": 4.1, "days_left": 64, "weekly_sales": [{"week": "06/01", "qty": 286}, {"week": "06/08", "qty": 279}, {"week": "06/15", "qty": 268}, {"week": "06/22", "qty": 33}], "already_ordered": 0, "transit_total": 0, "eligible_store_count": 30, "main_store_count": 30, "tag": "大爆款", "reorder": 3199, "eff_guard": 30, "leadtime": 30, "near_end": false, "sz_detail": [{"sz": "S", "inv": 118, "cum_sales": 590, "sellthru_a": 0.8333, "days_to_55_b": 25, "spsd_c": 1.2661, "is_oos": false, "reorder": 1012, "transit": 0}, {"sz": "M", "inv": 86, "cum_sales": 515, "sellthru_a": 0.8569, "days_to_55_b": 24, "spsd_c": 1.2592, "is_oos": false, "reorder": 1040, "transit": 0}, {"sz": "L", "inv": 33, "cum_sales": 569, "sellthru_a": 0.9452, "days_to_55_b": 21, "spsd_c": 1.2451, "is_oos": false, "reorder": 1147, "transit": 0}], "headorder_rank": ["S", "L", "M"], "sz_sellthru_map": {"S": 0.8333333333333334, "M": 0.8569051580698835, "L": 0.9451827242524917}}, {"pid": "2620131008", "style": "WX0890A", "name": "抽繩鬆緊腰寬褲", "brand": "AS", "cat": "褲子", "year": "26", "season": "春夏", "color": "黑", "img_url": "", "cum_sales": 1622, "sellthru": 0.866, "effective_spsd": 1.8644, "decision_score": 25, "st_score": 5, "vol_score": 5, "supply_warn": false, "size_shift_warn": true, "size_complete_rate": 0.6333, "color_main_inv": 251, "turnover_days": 4.5, "days_left": 64, "weekly_sales": [{"week": "06/01", "qty": 282}, {"week": "06/08", "qty": 278}, {"week": "06/15", "qty": 245}, {"week": "06/22", "qty": 30}], "already_ordered": 0, "transit_total": 0, "eligible_store_count": 30, "main_store_count": 30, "tag": "大爆款", "reorder": 3105, "eff_guard": 30, "leadtime": 30, "near_end": false, "sz_detail": [{"sz": "S", "inv": 112, "cum_sales": 534, "sellthru_a": 0.8266, "days_to_55_b": 25, "spsd_c": 1.2745, "is_oos": false, "reorder": 986, "transit": 0}, {"sz": "M", "inv": 102, "cum_sales": 525, "sellthru_a": 0.8373, "days_to_55_b": 25, "spsd_c": 1.2324, "is_oos": false, "reorder": 999, "transit": 0}, {"sz": "L", "inv": 37, "cum_sales": 563, "sellthru_a": 0.9383, "days_to_55_b": 21, "spsd_c": 1.2709, "is_oos": false, "reorder": 1120, "transit": 0}], "headorder_rank": ["S", "M", "L"], "sz_sellthru_map": {"S": 0.826625386996904, "M": 0.8373205741626795, "L": 0.9383333333333334}}, {"pid": "2620135001", "style": "GT9012Q", "name": "格紋蓬蓬裙", "brand": "OL", "cat": "裙子", "year": "26", "season": "春夏", "color": "格紋", "img_url": "", "cum_sales": 549, "sellthru": 0.7583, "effective_spsd": 2.278, "decision_score": 20, "st_score": 5, "vol_score": 4, "supply_warn": false, "size_shift_warn": true, "size_complete_rate": 0.625, "color_main_inv": 175, "turnover_days": 4.8, "days_left": 64, "weekly_sales": [{"week": "06/01", "qty": 101}, {"week": "06/08", "qty": 210}, {"week": "06/15", "qty": 212}, {"week": "06/22", "qty": 26}], "already_ordered": 110, "transit_total": 110, "eligible_store_count": 16, "main_store_count": 16, "tag": "爆款", "reorder": 1574, "eff_guard": 21, "leadtime": 30, "near_end": false, "sz_detail": [{"sz": "S", "inv": 90, "cum_sales": 166, "sellthru_a": 0.6484, "days_to_55_b": 15, "spsd_c": 1.3071, "is_oos": false, "reorder": 445, "transit": 60}, {"sz": "M", "inv": 58, "cum_sales": 203, "sellthru_a": 0.7778, "days_to_55_b": 13, "spsd_c": 1.4397, "is_oos": false, "reorder": 533, "transit": 50}, {"sz": "L", "inv": 27, "cum_sales": 180, "sellthru_a": 0.8696, "days_to_55_b": 12, "spsd_c": 1.3139, "is_oos": false, "reorder": 596, "transit": 0}], "headorder_rank": ["M", "S", "L"], "sz_sellthru_map": {"S": 0.6484375, "M": 0.7777777777777778, "L": 0.8695652173913043}}], "defaults": {"thresholds": {"大爆款": 22, "爆款": 16, "潛力款": 12, "常青款": 6}, "guard_days": {"大爆款": 30, "爆款": 21, "潛力款": 14, "常青款": 30, "地雷": 0}}, "week_labels": ["06/01", "06/08", "06/15", "06/22"]};
+const PRODS=DATA.products;
+const WLABELS=DATA.week_labels;
+const TAG_S={'大爆款':{c:'tag-mega',i:'👑'},'爆款':{c:'tag-hot',i:'✨'},
+              '潛力款':{c:'tag-rising',i:'🌑'},'常青款':{c:'tag-steady',i:'🛡️'},'地雷':{c:'tag-slow',i:'⚠️'}};
+
+// Init filters
+(()=>{
+  const brands=[...new Set(PRODS.map(p=>p.brand))].sort();
+  const cats=[...new Set(PRODS.map(p=>p.cat))].sort();
+  ['fb','fc'].map((id,i)=>{
+    const sel=document.getElementById(id);
+    (i===0?brands:cats).forEach(v=>{const o=document.createElement('option');o.value=o.textContent=v;sel.appendChild(o);});
+  });
+})();
+
+function sl(el,oid,sfx){document.getElementById(oid).textContent=el.value+sfx;render();}
+
+function params(){
+  return {t1:+t1.value,t2:+t2.value,t3:+t3.value,t4:+t4.value,
+          d1:+d1.value,d2:+d2.value,d3:+d3.value,d4:+d4.value};
+}
+function getTag(sc,p){
+  if(sc>=p.t1)return'大爆款';if(sc>=p.t2)return'爆款';
+  if(sc>=p.t3)return'潛力款';if(sc>=p.t4)return'常青款';return'地雷';
+}
+function calcRO(prod,p){
+  const tag=getTag(prod.decision_score,p);
+  const gmap={'大爆款':p.d1,'爆款':p.d2,'潛力款':p.d3,'常青款':p.d4,'地雷':0};
+  const gd=gmap[tag],lt=prod.leadtime||30,dl=prod.days_left??999;
+  const eg=Math.max(0,Math.min(gd,dl-lt));
+  const nearEnd=eg===0&&dl<999&&tag!=='地雷';
+  if(eg<=0)return{tag,ro:0,eg,lt,nearEnd};
+  const need=prod.effective_spsd*prod.main_store_count*(lt+eg);
+  const ro=Math.max(0,Math.round(need-prod.color_main_inv-prod.transit_total));
+  return{tag,ro,eg,lt,nearEnd};
+}
+function calcSzRO(prod,total){
+  const stMap=prod.sz_sellthru_map;
+  const total_st=Object.values(stMap).reduce((a,b)=>a+b,0);
+  return prod.sz_detail.map(s=>{
+    const r=total_st>0?(stMap[s.sz]||0)/total_st:1/Math.max(1,prod.sz_detail.length);
+    return{...s,ro:Math.max(0,Math.round(total*r))};
+  });
+}
+function toClass(v){
+  if(v==null)return'';if(v<10)return'to-urgent';if(v<=30)return'to-healthy';
+  if(v<=60)return'to-heavy';return'to-slow';
+}
+
+const expanded=new Set();
+function toggle(k){expanded.has(k)?expanded.delete(k):expanded.add(k);render();}
+
+let curTab='main';
+function switchTab(t){
+  curTab=t;
+  document.getElementById('sec-main').style.display=t==='main'?'':'none';
+  document.getElementById('sec-toolbar').style.display=t==='main'?'':'none';
+  document.getElementById('sec-sum').style.display=t==='sum'?'':'none';
+  document.getElementById('tab-main').className='tab'+(t==='main'?' active':'');
+  document.getElementById('tab-sum').className='tab'+(t==='sum'?' active':'');
+  if(t==='sum')renderSum();
+}
+
+function render(){
+  const p=params();
+  const qi=fi.value.toLowerCase(),qs=fs.value.toLowerCase(),qn=fn.value.toLowerCase();
+  const fb_v=fb.value,fc_v=fc.value,ft_v=ft.value,fw_v=fw.value;
+  let skus=0,qty=0,sw=0,shw=0,html='';
+
+  PRODS.forEach(prod=>{
+    if(qi&&!prod.pid.toLowerCase().includes(qi))return;
+    if(qs&&!prod.style.toLowerCase().includes(qs))return;
+    if(qn&&!prod.name.toLowerCase().includes(qn))return;
+    if(fb_v&&prod.brand!==fb_v)return;
+    if(fc_v&&prod.cat!==fc_v)return;
+    const cr=calcRO(prod,p);
+    if(ft_v&&cr.tag!==ft_v)return;
+    if(fw_v==='supply'&&!prod.supply_warn)return;
+    if(fw_v==='shift'&&!prod.size_shift_warn)return;
+    if(fw_v==='end'&&!cr.nearEnd)return;
+
+    if(cr.ro>0){skus++;qty+=cr.ro;}
+    if(prod.supply_warn)sw++;
+    if(prod.size_shift_warn)shw++;
+
+    const ts=TAG_S[cr.tag]||TAG_S['地雷'];
+    const k=prod.pid+'_'+prod.color;
+    const isExp=expanded.has(k);
+    const dl=prod.days_left;
+    const dlStr=dl!=null?(dl<14?`<span style="color:#DC2626;font-weight:600">${dl}天</span>`:dl+'天'):'—';
+    const roStr=cr.ro>0?`<b>${cr.ro}</b>件`:'<span style="color:#ccc">—</span>';
+    const imgHtml=prod.img_url
+      ?`<img class="prod-img" src="${prod.img_url}" alt="" onerror="this.style.display='none'">`
+      :`<div class="prod-img-ph">📷</div>`;
+    let warns='';
+    if(prod.supply_warn)warns+='<span class="wchip supply">⚡ 供給受限</span>';
+    if(prod.size_shift_warn)warns+='<span class="wchip shift">↕ 尺碼偏移</span>';
+    if(cr.nearEnd)warns+='<span class="wchip end">⏳ 追加壓縮</span>';
+    if(warns)warns='<div class="warns">'+warns+'</div>';
+
+    html+=`<tr class="main-row">
+      <td><button class="exp-btn" onclick="toggle('${k}')">${isExp?'▾':'▸'}</button></td>
+      <td>${imgHtml}</td>
+      <td><span class="badge badge-brand">${prod.brand}</span></td>
+      <td style="color:#777">${prod.cat}</td>
+      <td style="font-size:11px;color:#999">${prod.pid}<br><span style="color:#666">${prod.color}</span></td>
+      <td style="font-size:11px;color:#777">${prod.style}</td>
+      <td><div style="font-size:12px">${prod.name}</div>${warns}</td>
+      <td><span class="badge ${ts.c}">${ts.i} ${cr.tag}</span></td>
+      <td style="text-align:right"><span class="score-chip">${prod.decision_score}</span></td>
+      <td style="text-align:right">${(prod.sellthru*100).toFixed(1)}%</td>
+      <td style="text-align:right">${prod.effective_spsd.toFixed(2)}</td>
+      <td style="text-align:right"><span class="${toClass(prod.turnover_days)}">${prod.turnover_days!=null?prod.turnover_days+'天':'—'}</span></td>
+      <td style="text-align:right">${dlStr}</td>
+      <td style="text-align:right">${roStr}</td>
+      <td style="text-align:center;padding:3px 6px">${sparkline(prod.weekly_sales)}</td>
+    </tr>`;
+
+
+
+    if(isExp){
+      const szs=calcSzRO(prod,cr.ro);
+      html+=`<tr class="sub-row"><td colspan="15"><div class="sub-inner">
+        <div class="sub-meta">
+          <span>年度：<b>${prod.year}</b></span>
+          <span>季節：<b>${prod.season}</b></span>
+          <span>尺碼完整率：<b style="color:${prod.size_complete_rate<0.8?'#D97706':'inherit'}">${(prod.size_complete_rate*100).toFixed(0)}%</b>
+            <span class="tip-icon" onclick="showTip(this,'各主力尺碼都有庫存的店數÷可販售總店數。')">ⓘ</span>
+          </span>
+          <span>LeadTime：<b>${cr.lt}</b>天</span>
+          <span>可販售店：<b>${prod.eligible_store_count}</b>間</span>
+          ${prod.size_shift_warn?`<span style="color:#C2410C">⚠ 頭單：${prod.headorder_rank.join('>')}</span>`:''}
+        </div>
+        <table class="sz-table">
+          <thead><tr>
+            <th>尺碼</th>
+            <th style="text-align:right">現庫存</th>
+            <th style="text-align:right">(A) 完銷率 <span class="tip-icon" onclick="showTip(this,'主力尺碼依據，追加量分配以此為基準。')">ⓘ</span></th>
+            <th style="text-align:right">(B) 達55%天數 <span class="tip-icon" onclick="showTip(this,'從上架日起賣到55%完銷所需天數。')">ⓘ</span></th>
+            <th style="text-align:right">(C) 有效日均銷 <span class="tip-icon" onclick="showTip(this,'該尺碼在有貨期間每日均銷量，排除缺貨期低估。')">ⓘ</span></th>
+            <th style="text-align:right">已追加量 <span class="tip-icon" onclick="showTip(this,'此尺碼在追加單中尚未到貨的在途量。')">ⓘ</span></th>
+            <th style="text-align:right">建議追加</th>
+          </tr></thead>
+          <tbody>
+            ${szs.map(s=>`<tr>
+              <td>${s.sz}${s.is_oos?'<span class="oos">斷碼</span>':''}</td>
+              <td style="text-align:right">${s.inv}</td>
+              <td style="text-align:right">${(s.sellthru_a*100).toFixed(1)}%</td>
+              <td style="text-align:right">${s.days_to_55_b!=null?s.days_to_55_b+'天':'—'}</td>
+              <td style="text-align:right">${s.spsd_c.toFixed(2)}</td>
+              <td style="text-align:right;color:#888">${s.transit>0?s.transit+'件':'—'}</td>
+              <td style="text-align:right;font-weight:500">${s.ro>0?s.ro+'件':'—'}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div></td></tr>`;
+    }
+  });
+
+  document.getElementById('c1').textContent=skus;
+  document.getElementById('c2').textContent=qty.toLocaleString();
+  document.getElementById('c3').textContent=sw;
+  document.getElementById('c4').textContent=shw;
+  document.getElementById('tbody').innerHTML=html||'<tr><td colspan="15" class="no-data">無符合條件的商品</td></tr>';
+}
+
+function renderSum(){
+  const p=params();
+  const map={};
+  PRODS.forEach(prod=>{
+    const cr=calcRO(prod,p);
+    const k=`${prod.year}|${prod.season}|${prod.brand}|${prod.cat}`;
+    if(!map[k])map[k]={year:prod.year,season:prod.season,brand:prod.brand,cat:prod.cat,skus:0,qty:0};
+    if(cr.ro>0)map[k].skus++;
+    map[k].qty+=cr.ro;
+  });
+  document.getElementById('tbody-sum').innerHTML=
+    Object.values(map).sort((a,b)=>a.year.localeCompare(b.year)||a.brand.localeCompare(b.brand)||a.cat.localeCompare(b.cat))
+    .map(r=>`<tr><td>${r.year}</td><td>${r.season}</td><td>${r.brand}</td><td>${r.cat}</td>
+      <td style="text-align:right">${r.skus}</td><td style="text-align:right">${r.qty.toLocaleString()} 件</td></tr>`)
+    .join('')||'<tr><td colspan="6" class="no-data">—</td></tr>';
+}
+
+
+function sparkline(weekly) {
+  if (!weekly || weekly.length === 0) return '';
+  const vals = weekly.map(function(w) { return w.qty; });
+  const maxV = Math.max.apply(null, vals.concat([1]));
+  const W = 110, H = 52, padX = 6, padTop = 14, padBot = 12, n = vals.length;
+  const pts = vals.map(function(v, i) {
+    const x = padX + (n > 1 ? i / (n - 1) : 0.5) * (W - padX * 2);
+    const y = padTop + (1 - v / maxV) * (H - padTop - padBot);
+    return [x.toFixed(1), y.toFixed(1)];
+  });
+  const last = vals[vals.length - 1];
+  const prev = vals.length > 1 ? vals[vals.length - 2] : last;
+  const color = last > prev ? '#16A34A' : last < prev ? '#DC2626' : '#9CA3AF';
+  let svg = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:auto;overflow:visible">';
+  svg += '<polyline points="' + pts.map(function(p) { return p[0]+','+p[1]; }).join(' ') + '" fill="none" stroke="' + color + '" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>';
+  pts.forEach(function(pt, i) {
+    const x = parseFloat(pt[0]), y = parseFloat(pt[1]);
+    const isLast = i === pts.length - 1;
+    svg += '<circle cx="' + x + '" cy="' + y + '" r="' + (isLast ? 2.8 : 1.8) + '" fill="' + (isLast ? color : '#bbb') + '"/>';
+    svg += '<text x="' + x + '" y="' + (y - 4) + '" text-anchor="middle" font-size="9" fill="' + (isLast ? color : '#aaa') + '" font-family="-apple-system,sans-serif">' + vals[i] + '</text>';
+  });
+  svg += '</svg>';
+  return svg;
+}
+
+
+// 共用 tooltip，掛在 body，position:fixed 不受任何容器裁切
+var _tip = document.createElement('div');
+_tip.id = '_gtip';
+_tip.style.cssText = 'display:none;position:fixed;background:#222;color:#fff;border-radius:6px;padding:7px 11px;font-size:11px;width:220px;line-height:1.6;z-index:99999;word-break:keep-all;box-shadow:0 2px 8px rgba(0,0,0,.25);pointer-events:none';
+document.body.appendChild(_tip);
+
+var _tipSrc = null;
+function showTip(el, text) {
+  if (_tipSrc === el && _tip.style.display !== 'none') {
+    _tip.style.display = 'none'; _tipSrc = null; return;
+  }
+  _tipSrc = el;
+  _tip.textContent = text;
+  _tip.style.display = 'block';
+  _tip.style.visibility = 'hidden';
+  var rect = el.getBoundingClientRect();
+  var tw = _tip.offsetWidth, th = _tip.offsetHeight;
+  var top = rect.top - th - 8;
+  var left = rect.left + rect.width/2 - tw/2;
+  if (top < 6) top = rect.bottom + 8;
+  if (left < 6) left = 6;
+  if (left + tw > window.innerWidth - 6) left = window.innerWidth - tw - 6;
+  _tip.style.top = top + 'px';
+  _tip.style.left = left + 'px';
+  _tip.style.visibility = 'visible';
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.classList.contains('tip-icon')) {
+    _tip.style.display = 'none'; _tipSrc = null;
+  }
+});
+
+render();
+</script>
+</body>
+</html>
